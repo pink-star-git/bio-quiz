@@ -1,0 +1,10 @@
+<svg viewBox="0 0 2048 2048" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path id="p" d="M1024 304L1647.5385 1384H400.4615Z" />
+<use href="#p" stroke="#000" stroke-width="194"/>
+<use href="#p" stroke="#FF006B" stroke-width="110"/>
+<circle cx="1024" cy="1024" r="436" stroke="black" stroke-width="346"/>
+<circle cx="1024" cy="1024" r="512" stroke="#FF006B" stroke-width="110"/>
+<circle cx="1024" cy="1024" r="360" stroke="#FF006B" stroke-width="110"/>
+<use href="#p" stroke="#000" stroke-width="194" stroke-dasharray="0 623.5 523 100" />
+<use href="#p" stroke="#FF006B" stroke-width="110" stroke-dasharray="0 623.5 623 0" stroke-linecap="round"/>
+</svg>

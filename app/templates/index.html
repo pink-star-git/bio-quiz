@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main>
+    {% for id in quizs.keys() %}
+        <a href="/quiz/{{ id }}" class="quiz" id="{{id}}" style="background-image: url({{quizs[id].img_url}});">
+            {# <img src="/static/img/{{quizs[id].img_url}}"> #}
+            <div class="quiz-info">
+                <div class="quiz-title">{{ quizs[id].title }}</div>
+                <div class="quiz-description">{{ quizs[id].description }}</div>
+            </div>
+        </a>
+    {% endfor %}
+    <div class="add-quiz">
+        <a href="/add-quiz">добавить КВИЗ</a>
+    </div>
+</main>
+{% endblock %}

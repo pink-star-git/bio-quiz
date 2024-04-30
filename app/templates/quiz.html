@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main>
+
+<script type="text/javascript">
+    var quiz = JSON.parse('{{ quiz }}'.replaceAll('&#34;', '"'))
+</script>
+</main>
+{% endblock %}

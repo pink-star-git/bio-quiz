@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main>
+    <form action='' method='post' novalidate enctype="multipart/form-data">
+        {{ add_form.quiz_title.title }}
+        {{ add_form.quiz_title() }}
+        {{ add_form.quiz_discription.title }}
+        {{ add_form.quiz_discription() }}
+        {{ add_form.quiz_theory.title }}
+        {{ add_form.quiz_theory() }}
+        {{ add_form.quiz_img.title }}
+        {{ add_form.quiz_img() }}
+        {{ add_form.quiz_submit() }}
+        {{ add_form.questions() }}
+    </form>
+</main>
+
+<script type="text/javascript">
+    var questions = document.getElementById('questions');
+    var uid = 0;
+    var question_template = questions.childNodes[uid].innerHTML;
+    var qa_template = questions.childNodes[uid].getElementsByClassName('question')[0].innerHTML;
+
+
+    function set_hidden_question(question, is_hidden) {
+            question.childNodes[2].childNodes[0].childNodes[1].hidden = is_hidden;
+    }
+
+    set_hidden_question(document.getElementById('questions').childNodes[0], true);
+
+    function type_change(target, question) {
+        if (target.selectedIndex != 0 && question.getAttribute('active') == 'false') {
+            createQuestion();
+        }
+        if (target.selectedIndex == 0) {
+            set_hidden_question(question, true);
+            target.removeEventListener('input', type_change);
+            question.remove();
+        } else {
+            set_hidden_question(question, false);
+            question.setAttribute('active', 'true');
+            if (target.selectedIndex == 1) {
+                var add_qa = document.createElement('button');
+                add_qa.innerText = 'Добавить'
+                add_qa.addEventListener('click', (event) => {
+                    uid += 1;
+                    event.preventDefault();
+                    question.getElementsByClassName('question')[0].insertAdjacentHTML('beforeend', qa_template.replaceAll('question-0',`question-${uid}`));
+                });
+                question.getElementsByClassName('question')[0].parentNode.appendChild(add_qa);
+            } else if (target.selectedIndex == 2) {
+                question.getElementsByClassName('question')[0].parentNode.childNodes[1].remove();
+                question.getElementsByClassName('question')[0].innerHTML = qa_template;
+            }
+        }
+    }
+
+    function createQuestion() {
+        uid += 1;
+        var new_question = document.createElement('li');
+        new_question.innerHTML = question_template.replaceAll('questions-0', `questions-${uid}`)
+        new_question.setAttribute('active', 'false');
+        set_hidden_question(new_question, true);
+        var typef = new_question.getElementsByClassName('type-field')[0];
+        for (var i=0; i<new_question.getElementsByClassName('question-field').length;i++){
+            set_hidden_question(new_question, true);
+        }
+        typef.addEventListener('input', (event) => {type_change(event.target, new_question)});
+        questions.appendChild(new_question);
+    }
+
+    function startQuestion() {
+        var question = document.getElementById('questions').childNodes[0];
+        question.setAttribute('active', 'false');
+        var typef = question.getElementsByClassName('type-field')[0];
+            for (var i=0; i<question.getElementsByClassName('question-field').length;i++){
+                set_hidden_question(question, true);
+            }
+            typef.addEventListener('input',  (event) => {type_change(event.target, question)});
+    }
+
+    startQuestion();
+
+
+    
+
+</script>
+{% endblock %}
