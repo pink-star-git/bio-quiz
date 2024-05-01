@@ -2,8 +2,10 @@ import os
 import json
 from flask import render_template, flash, request, redirect, url_for, send_from_directory
 from werkzeug.utils import secure_filename
-from app import app
+from app import app, db
 from app.forms import QuizAddForm
+from app.models import QuestDatabase, QuizzDatabase, QQDatabase
+
 
 # папка для сохранения загруженных файлов
 # расширения файлов, которые разрешено загружать
@@ -121,6 +123,39 @@ def add_quiz():
                 }
             for item in quiz_add_form.questions.data if item['type'] != 'none']
         }
+
+        quizz = QuizzDatabase(name=quiz_add_form.quiz_title.data, 
+                              description=quiz_add_form.quiz_discription.data,
+                              theory=quiz_add_form.quiz_theory.data,
+                              image=f'/static/img/{filename}')
+        quests = []
+        num = 0
+        for item in quiz_add_form.questions.data:
+            if item['type'] == 'none':
+                continue
+            type = item['type']
+            num+= 1
+            for qa in item['question']:
+                if(type == "a2a"):
+                    quests.append(QuestDatabase(type=1, 
+                                                num=num, 
+                                                quest=qa['question'], 
+                                                answer=qa['answer']))
+                else:
+                    quests.append(QuestDatabase(type=2, 
+                                                num=0, 
+                                                quest=qa['question'], 
+                                                answer=qa['answer']))
+        
+        qqlist = [QQDatabase(idQuizz=quizz, idQuest=q) for q in quests]
+
+        db.session.add(quizz)
+        for q in quests:
+            db.session.add(q)
+        for qq in qqlist:
+            db.session.add(qq)
+        db.session.commit()
+
         print('add quiz: successfully')
         return redirect(url_for('index'))
     if request.method == 'GET':
