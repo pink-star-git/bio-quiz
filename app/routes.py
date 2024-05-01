@@ -110,7 +110,7 @@ def add_quiz():
         quizs[str(int(list(quizs.keys())[-1])+1)] = {
             'title':quiz_add_form.quiz_title.data,
             'description':quiz_add_form.quiz_discription.data,
-            'theory':quiz_add_form.quiz_theory.data,
+            'theory':quiz_add_form.quiz_theory.data.replace('\n', '\\n',  -1),
             'img_url':f'/static/img/{filename}',
             'questions':[
                 {

@@ -1,6 +1,6 @@
 # from app import app
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, FileField, SelectField, FieldList, FormField, Form
+from wtforms import StringField, TextAreaField, SubmitField, FileField, SelectField, FieldList, FormField, Form
 from wtforms.validators import DataRequired
 
 file_choices = [('none', ''), ('a2a', 'Сопостовление'), ('card', 'Карточка')]
@@ -21,7 +21,7 @@ class QuestionForm(Form):
 class QuizAddForm(FlaskForm):
     quiz_title = StringField('Название')
     quiz_discription = StringField('Описание')
-    quiz_theory = StringField('Теория')
+    quiz_theory = TextAreaField('Теория')
     quiz_img = FileField('Фон')
     quiz_submit = SubmitField('Создать')
     questions = FieldList(
