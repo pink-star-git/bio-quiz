@@ -1,0 +1,15 @@
+main {
+    margin: 32px 10%;
+}
+
+.questions > li {
+    width: fit-content;
+    padding: 4px 6px;
+    margin-bottom: 6px;
+    list-style: none;
+    background-color: #000000a0;
+    border-radius: 12px;
+    border-width: 1px;
+    border-color: #00000044;
+    border-style: solid;
+}

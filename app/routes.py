@@ -29,6 +29,7 @@ from app.forms import QuizAddForm
 {
     "title":"asdsdad",
     "description":"asdsaf",
+    "theory":"test is the test quiz description",
     "img_url":"/static/img/600x800",
     "questions":[
         {
@@ -109,6 +110,7 @@ def add_quiz():
         quizs[str(int(list(quizs.keys())[-1])+1)] = {
             'title':quiz_add_form.quiz_title.data,
             'description':quiz_add_form.quiz_discription.data,
+            'theory':quiz_add_form.quiz_theory.data,
             'img_url':f'/static/img/{filename}',
             'questions':[
                 {

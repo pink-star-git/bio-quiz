@@ -1,0 +1,84 @@
+.quiz-titleInner{
+    border: 2px solid black;
+    margin-bottom: 20px;
+}
+
+.quiz-imgInner{
+    width: 60%;
+    height: 400px;
+    margin-bottom: 20px;
+    margin-left: 20%;
+}
+
+.quiz-theoryInner{
+    width: 60%;
+    margin-left: 20%;
+    text-align: center;
+}
+
+.quiz-footerInner{
+    border: 2px solid black;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    width: 60%;
+    margin-left: 20%;
+    text-align: center;
+}
+
+.quiz-cardInner{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 2px solid black;
+    margin: 20px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: rgb(25, 83, 64);
+}
+
+.quiz-backgroundInnerAction{
+    background-color: rgb(36, 136, 136);
+    border: 1px solid black;
+    border-radius: 5px;
+    width: 200px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    height: 20px;
+}
+
+.quiz-backgroundInner{
+    background-color: rgb(36, 136, 136);
+    border: 1px solid black;
+    border-radius: 5px;
+    width: 200px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    animation-name: none;
+}
+
+.quiz-backgroundInner:hover {
+    background-color: blue;
+}
+
+.quiz-backgroundSelected{
+    background-color: blue !important;
+}
+
+.quiz-backgroundTrue{
+    background-color: green !important;
+}
+
+.quiz-cardContent{
+    display: flex;
+    justify-content: space-around;
+    width: 600px;
+}
+
+@keyframes reveal{
+    0%{
+        color:  rgb(36, 136, 136);
+    }
+    100%{
+        color: black;
+    }
+}
