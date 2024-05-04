@@ -2,14 +2,12 @@ import os
 import json
 from flask import render_template, flash, request, redirect, url_for, send_from_directory
 from werkzeug.utils import secure_filename
-from app import app, db
+from app import app
 from app.forms import QuizAddForm
-from app.models import QuestDatabase, QuizzDatabase, QQDatabase
+from app.models import DB
+# from app.models import DB
 
-
-# папка для сохранения загруженных файлов
-# расширения файлов, которые разрешено загружать
-
+db = DB()
 
 #  quizs-{
 #   "<id>":<quiz>,
@@ -50,55 +48,56 @@ from app.models import QuestDatabase, QuizzDatabase, QQDatabase
 }
 '''
 
-quizs = {
-    "1": {
-        "title":"quiz #1",
-        "description":"test quiz description",
-        "theory":"test is the test quiz description",
-        "img_url":"/static/img/test.png",
-        "questions":[
-            {
-                "type":"a2a",
-                "answers":{
-                        "test 1":"aboba 1",
-                        "test 2":"aboba 2",
-                        "test 3":"aboba 3",
-                        "test 4":"aboba 4"
-                }
-            },
-            {
-                "type":"card",
-                "answers":{
-                        "test 1":"aboba 1"
-                }
-            }
-        ]
-    },
-    "2": {
-        "title":"quiz #2",
-        "description":"test more quiz",
-        "teory":"test is the test quiz description",
-        "img_url":"/static/img/zebra.png",
-        "type":"multiple_choice",
-        "questions":[
-            {
-                "title":"question2",
-                "answers":{
-                        "test 1":"aboba 1",
-                        "test 2":"aboba 2",
-                        "test 3":"aboba 3",
-                        "test 4":"aboba 4"
-                }
-            }
-        ]
-    }
-}
+# quizs = {
+#     "1": {
+#         "title":"quiz #1",
+#         "description":"test quiz description",
+#         "theory":"test is the test quiz description",
+#         "img_url":"/static/img/test.png",
+#         "questions":[
+#             {
+#                 "type":"a2a",
+#                 "answers":{
+#                         "test 1":"aboba 1",
+#                         "test 2":"aboba 2",
+#                         "test 3":"aboba 3",
+#                         "test 4":"aboba 4"
+#                 }
+#             },
+#             {
+#                 "type":"card",
+#                 "answers":{
+#                         "test 1\\n?":"aboba 1"
+#                 }
+#             }
+#         ]
+#     },
+#     "2": {
+#         "title":"quiz #2",
+#         "description":"test more quiz",
+#         "teory":"test is the test quiz description",
+#         "img_url":"/static/img/zebra.png",
+#         "type":"multiple_choice",
+#         "questions":[
+#             {
+#                 "title":"question2",
+#                 "answers":{
+#                         "test 1":"aboba 1",
+#                         "test 2":"aboba 2",
+#                         "test 3":"aboba 3",
+#                         "test 4":"aboba 4"
+#                 }
+#             }
+#         ]
+#     }
+# }
 
 
 @app.route('/')
 @app.route('/index')
 @app.route('/index.html')
 def index():
+    quizs = {i[0]:json.loads(i[1]) for i in db.getAll()}
     return render_template('index.html', quizs=quizs)
 
 @app.route('/add-quiz', methods=['GET', 'POST'])
@@ -109,10 +108,25 @@ def add_quiz():
         filename = secure_filename(quiz_add_form.quiz_img.data.filename)
         quiz_add_form.quiz_img.data.save(f'{app.config["UPLOAD_FOLDER"]}/{filename}')
 
-        quizs[str(int(list(quizs.keys())[-1])+1)] = {
+        # quizs[str(int(list(quizs.keys())[-1])+1)] = {
+        #     'title':quiz_add_form.quiz_title.data,
+        #     'description':quiz_add_form.quiz_discription.data,
+        #     'theory':quiz_add_form.quiz_theory.data.replace('\r\n', '\\n',  -1),
+        #     'img_url':f'/static/img/{filename}',
+        #     'questions':[
+        #         {
+        #             'type':item['type'],
+        #             'answers':{
+        #                 qa['question']:qa['answer']
+        #             for qa in item['question']}
+        #         }
+        #     for item in quiz_add_form.questions.data if item['type'] != 'none']
+        # }
+        # print(json.dumps(quizs[list(quizs.keys())[-1]]))
+        db.add(json.dumps({
             'title':quiz_add_form.quiz_title.data,
             'description':quiz_add_form.quiz_discription.data,
-            'theory':quiz_add_form.quiz_theory.data.replace('\r\n', '\\n',  -1),
+            'theory':quiz_add_form.quiz_theory.data,
             'img_url':f'/static/img/{filename}',
             'questions':[
                 {
@@ -122,39 +136,7 @@ def add_quiz():
                     for qa in item['question']}
                 }
             for item in quiz_add_form.questions.data if item['type'] != 'none']
-        }
-
-        quizz = QuizzDatabase(name=quiz_add_form.quiz_title.data, 
-                              description=quiz_add_form.quiz_discription.data,
-                              theory=quiz_add_form.quiz_theory.data,
-                              image=f'/static/img/{filename}')
-        quests = []
-        num = 0
-        for item in quiz_add_form.questions.data:
-            if item['type'] == 'none':
-                continue
-            type = item['type']
-            num+= 1
-            for qa in item['question']:
-                if(type == "a2a"):
-                    quests.append(QuestDatabase(type=1, 
-                                                num=num, 
-                                                quest=qa['question'], 
-                                                answer=qa['answer']))
-                else:
-                    quests.append(QuestDatabase(type=2, 
-                                                num=0, 
-                                                quest=qa['question'], 
-                                                answer=qa['answer']))
-        
-        qqlist = [QQDatabase(idQuizz=quizz, idQuest=q) for q in quests]
-
-        db.session.add(quizz)
-        for q in quests:
-            db.session.add(q)
-        for qq in qqlist:
-            db.session.add(qq)
-        db.session.commit()
+        }).replace('\r\n', '\\n',  -1))
 
         print('add quiz: successfully')
         return redirect(url_for('index'))
@@ -164,8 +146,12 @@ def add_quiz():
 
 @app.route('/quiz/<quiz_id>')
 def quiz(quiz_id):
-    if quiz_id in quizs.keys():
-        return render_template('quiz.html', quiz=json.dumps(quizs[quiz_id]))
+    quizs = {f"{i}":q for i, q in db.getAll()}
+    if quiz_id in list(quizs.keys()):
+        return render_template('quiz.html', quiz=quizs[quiz_id])# quiz=json.dumps(quizs[quiz_id]))
+    # else:
+    #     print(quiz_id)
+    #     print(list(quizs.keys()))
     return redirect(url_for('error404'))
 
 

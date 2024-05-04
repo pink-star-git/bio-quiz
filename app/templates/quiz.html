@@ -17,30 +17,29 @@
         }
 
         function createHeader() {
-            let title = document.createElement("div")
-            title.innerHTML = quiz["title"]
-            title.setAttribute("class", "quiz-titleInner")
-            main.appendChild(title)
-        }
-
-        function createBody() {
-            let body = document.createElement("div");{
+            let header = document.createElement("div");
+            header.setAttribute("class", "quiz-headerInner");
+            {
+                let title = document.createElement("div")
+                title.innerHTML = quiz["title"]
+                title.setAttribute("class", "quiz-titleInner")
+                header.appendChild(title)
                 let img = document.createElement("img");
                 img.setAttribute("src", quiz["img_url"]);
                 img.setAttribute("class", "quiz-imgInner");
-                body.appendChild(img);
+                header.appendChild(img);
                 let theory = document.createElement("div");
                 theory.innerHTML = quiz["theory"];
                 theory.setAttribute("class", "quiz-theoryInner");
-                body.appendChild(theory);
-            }main.appendChild(body);
+                header.appendChild(theory);
+            }main.appendChild(header);
         }
 
-        function createFooter() {
-            let footer = document.createElement("div");
-            footer.setAttribute("class", "quiz-footerInner");
-            footer.setAttribute("id", "workspace");
-            main.appendChild(footer);
+        function createBody() {
+            let body = document.createElement("div");
+            body.setAttribute("class", "quiz-bodyInner");
+            body.setAttribute("id", "workspace");
+            main.appendChild(body);
         }
 
         function createCard(card, id) {
@@ -51,14 +50,14 @@
                 if (card["type"] == "a2a"){
                     let action = document.createElement("div");
                     action.setAttribute("name", "action");
-                    action.setAttribute("class", "quiz-backgroundInnerAction");
+                    action.setAttribute("class", "quiz-backgroundInner");
                     action.innerHTML = "Выберите вопрос";
                     cardDiv.appendChild(action);
                     let questions = document.createElement("div");
                     questions.setAttribute("name", "questions");
                     for (let i = 0; i < Object.keys(card["answers"]).length; i++){
                         let question = document.createElement("div");
-                        question.setAttribute("class", "quiz-backgroundInner");
+                        question.setAttribute("class", "quiz-backgroundInner quiz-backgroundInnerAction");
                         question.innerHTML = Object.keys(card["answers"])[i];
                         question.addEventListener("click", match);
                         questions.appendChild(question);
@@ -67,7 +66,7 @@
                     let answers = [];
                     for (let i = 0; i < Object.keys(card["answers"]).length; i++){
                         let answer = document.createElement("div");
-                        answer.setAttribute("class", "quiz-backgroundInner");
+                        answer.setAttribute("class", "quiz-backgroundInner quiz-backgroundInnerAction");
                         answer.innerHTML = Object.values(card["answers"])[i];
                         answer.addEventListener("click", match);
                         answers.push(answer);
@@ -85,29 +84,16 @@
                     }
                     cardContent.appendChild(answersDiv);
                 } else {
-                    let constants = document.createElement("div");{
                         let question = document.createElement("div");
-                        question.setAttribute("class", "quiz-backgroundInnerAction");
-                        question.innerHTML = "Вопрос: ";
-                        constants.appendChild(question);
-                        let answer = document.createElement("div");
-                        answer.setAttribute("class", "quiz-backgroundInnerAction");
-                        answer.innerHTML = "Ответ: ";
-                        constants.appendChild(answer);
-                    }
-                    cardContent.appendChild(constants);
-                    let data = document.createElement("div");{
-                        let question = document.createElement("div");
-                        question.setAttribute("class", "quiz-backgroundInnerAction");
+                        question.setAttribute("class", "quiz-backgroundInner");
                         question.innerHTML = Object.keys(card["answers"])[0];
-                        data.appendChild(question);
                         let answer = document.createElement("div");
-                        answer.setAttribute("class", "quiz-backgroundInnerAction");
+                        answer.setAttribute("class", "quiz-backgroundInner");
+                        answer.setAttribute("data", card["answers"][question.innerHTML]);
                         answer.addEventListener("click", reveal);
-                        answer.style.color = "rgb(36, 136, 136)";
-                        data.appendChild(answer);
-                    }
-                    cardContent.appendChild(data);
+                        answer.style.color = "#ffe00000";
+                    cardContent.appendChild(question);
+                    cardContent.appendChild(answer);
                 }
                 cardDiv.appendChild(cardContent);
             }
@@ -117,10 +103,10 @@
         }
 
         function reveal(event){
-            event.target.innerHTML = answersShuffled[event.target.innerHTML = event.target.parentNode.parentNode.parentNode.id];
+            event.target.innerHTML = event.target.getAttribute("data");
             event.target.style.animationDuration = "1.5s";
             event.target.style.animationName = "reveal";
-            event.target.style.color = "black";
+            event.target.style.color = "#ffe000ff";
             event.target.removeEventListener("click", reveal);
         }
 
@@ -149,13 +135,12 @@
                 case "init":
                     createHeader();
                     createBody();
-                    createFooter();
                     break;
                 case "card":
                     for (let i = 0; i < quiz["questions"].length; i++){
                         createCard(quiz["questions"][i], i);
                     }
-                    break;            
+                    break;
             }
         }
     </script>

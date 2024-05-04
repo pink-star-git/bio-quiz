@@ -6,7 +6,7 @@ from wtforms.validators import DataRequired
 file_choices = [('none', ''), ('a2a', 'Сопостовление'), ('card', 'Карточка')]
 
 class QAForm(Form):
-    question = StringField('Вопрос', render_kw={"class": "question-field"})
+    question = TextAreaField('Вопрос', render_kw={"class": "question-field"})
     answer = StringField('Ответ', render_kw={"class": "question-field"})
 
 class QuestionForm(Form):

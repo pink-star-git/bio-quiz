@@ -45,10 +45,12 @@
             if (target.selectedIndex == 1) {
                 var add_qa = document.createElement('button');
                 add_qa.innerText = 'Добавить'
+                add_qa.setAttribute('quid', 0);
                 add_qa.addEventListener('click', (event) => {
-                    uid += 1;
+                    add_qa.setAttribute('quid', parseInt(add_qa.getAttribute('quid'))+1);
+                    var quid = add_qa.getAttribute('quid');
                     event.preventDefault();
-                    question.getElementsByClassName('question')[0].insertAdjacentHTML('beforeend', qa_template.replaceAll('question-0',`question-${uid}`));
+                    question.getElementsByClassName('question')[0].insertAdjacentHTML('beforeend', qa_template.replaceAll('question-0',`question-${quid}`));
                 });
                 question.getElementsByClassName('question')[0].parentNode.appendChild(add_qa);
             } else if (target.selectedIndex == 2) {

@@ -3,7 +3,7 @@ import sqlite3
 
 class DB:
     def __init__(self):
-        self.connect = sqlite3.connect("base.db")
+        self.connect = sqlite3.connect("base.db", check_same_thread=False)
         self.cursor = self.connect.cursor()
 
         self.cursor.execute("""CREATE TABLE IF NOT EXISTS a (
@@ -100,10 +100,10 @@ class DB:
     #     return [answ[0][0],answ[0][1], answ[0][2], answ[0][3], answ[0][4], ]
 
     def add(self, q: str):
-        self.cursor.execute("INSERT INTO a (body) VALUES (?)", q)
+        self.cursor.execute("INSERT INTO a (body) VALUES (?)", (q,))
         self.connect.commit()
 
-    def getAll(self):
+    def getAll(self) -> list[tuple[int, str]]:
         self.cursor.execute("SELECT * FROM a")
         return self.cursor.fetchall()
 

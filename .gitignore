@@ -1,3 +1,5 @@
 bio-quiz-venv
+venv
 __pycache__
 app/__pycache__
+app/static/img
