@@ -1,0 +1,11 @@
+version: "3.7"
+
+services:
+  bioquiz:
+    build: .
+    container_name: bioquiz
+    restart: unless-stopped
+    ports:
+      - 5000:5000
+    volumes:
+      - ./base.db:/web/base.db

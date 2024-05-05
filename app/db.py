@@ -2,14 +2,20 @@ import sqlite3
 
 
 class DB:
-    def __init__(self):
-        self.connect = sqlite3.connect("base.db", check_same_thread=False)
-        self.cursor = self.connect.cursor()
+    _connection = {}
+    _instance = None
 
-        self.cursor.execute("""CREATE TABLE IF NOT EXISTS a (
-                            id    INTEGER    PRIMARY KEY ON CONFLICT ROLLBACK AUTOINCREMENT,
-                            body  TEXT
-        );""")
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+
+            cls._connection = sqlite3.connect("base.db", check_same_thread=False)
+            cls._connection.execute("""
+                                    CREATE TABLE IF NOT EXISTS a (
+                                    id    INTEGER    PRIMARY KEY ON CONFLICT ROLLBACK AUTOINCREMENT,
+                                    body  TEXT);""")
+
+        return cls._instance
 
         # self.cursor.execute("""CREATE TABLE IF NOT EXISTS quizz (
         #                         id    INTEGER    PRIMARY KEY ON CONFLICT ROLLBACK AUTOINCREMENT,
@@ -99,13 +105,17 @@ class DB:
     #     for i in answ:
     #     return [answ[0][0],answ[0][1], answ[0][2], answ[0][3], answ[0][4], ]
 
-    def add(self, q: str):
-        self.cursor.execute("INSERT INTO a (body) VALUES (?)", (q,))
-        self.connect.commit()
+    @classmethod
+    def add(cls, q: str):
+        cls._connection.execute("INSERT INTO a (body) VALUES (?)", (q,))
+        cls._connection.commit()
 
-    def getAll(self) -> list[tuple[int, str]]:
-        self.cursor.execute("SELECT * FROM a")
-        return self.cursor.fetchall()
+    @classmethod
+    def getAll(cls) -> list[tuple[int, str]]:
+        cursor = cls._connection.cursor()
+        cursor.execute("SELECT * FROM a")
+        return cursor.fetchall()
 
-    def __del__(self):
-        self.connect.close()
+    @classmethod
+    def shutdown(cls):
+        cls._connection.close()

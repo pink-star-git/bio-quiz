@@ -2,9 +2,9 @@ import os
 import json
 from flask import render_template, flash, request, redirect, url_for, send_from_directory
 from werkzeug.utils import secure_filename
-from app import app
-from app.forms import QuizAddForm
-from app.models import DB
+from .flask_app import app
+from .forms import QuizAddForm
+from .db import DB
 # from app.models import DB
 
 db = DB()
@@ -97,8 +97,9 @@ db = DB()
 @app.route('/index')
 @app.route('/index.html')
 def index():
-    quizs = {i[0]:json.loads(i[1]) for i in db.getAll()}
+    quizs = {i[0]: json.loads(i[1]) for i in db.getAll()}
     return render_template('index.html', quizs=quizs)
+
 
 @app.route('/add-quiz', methods=['GET', 'POST'])
 @app.route('/add-quiz.html', methods=['GET', 'POST'])
@@ -124,18 +125,18 @@ def add_quiz():
         # }
         # print(json.dumps(quizs[list(quizs.keys())[-1]]))
         db.add(json.dumps({
-            'title':quiz_add_form.quiz_title.data,
-            'description':quiz_add_form.quiz_discription.data,
-            'theory':quiz_add_form.quiz_theory.data,
-            'img_url':f'/static/img/{filename}',
-            'questions':[
+            'title': quiz_add_form.quiz_title.data,
+            'description': quiz_add_form.quiz_discription.data,
+            'theory': quiz_add_form.quiz_theory.data,
+            'img_url': f'/static/img/{filename}',
+            'questions': [
                 {
-                    'type':item['type'],
-                    'answers':{
-                        qa['question']:qa['answer']
-                    for qa in item['question']}
+                    'type': item['type'],
+                    'answers': {
+                        qa['question']: qa['answer']
+                        for qa in item['question']}
                 }
-            for item in quiz_add_form.questions.data if item['type'] != 'none']
+                for item in quiz_add_form.questions.data if item['type'] != 'none']
         }).replace('\r\n', '\\n',  -1))
 
         print('add quiz: successfully')
@@ -144,11 +145,12 @@ def add_quiz():
         return render_template('add-quiz.html', add_form=quiz_add_form)
     return redirect(url_for('error500'))
 
+
 @app.route('/quiz/<quiz_id>')
 def quiz(quiz_id):
-    quizs = {f"{i}":q for i, q in db.getAll()}
+    quizs = {f"{i}": q for i, q in db.getAll()}
     if quiz_id in list(quizs.keys()):
-        return render_template('quiz.html', quiz=quizs[quiz_id])# quiz=json.dumps(quizs[quiz_id]))
+        return render_template('quiz.html', quiz=quizs[quiz_id])  # quiz=json.dumps(quizs[quiz_id]))
     # else:
     #     print(quiz_id)
     #     print(list(quizs.keys()))
@@ -159,9 +161,11 @@ def quiz(quiz_id):
 def error404():
     return render_template('errors/404.html')
 
+
 @app.route('/error-500')
 def error500():
     return render_template('errors/500.html')
+
 
 @app.route('/error-502')
 def error502():
@@ -171,10 +175,10 @@ def error502():
 # @app.route('/', methods=['GET', 'POST'])
 # def upload_file():
 #     if request.method == 'POST':
-#         # проверим, передается ли в запросе файл 
+#         # проверим, передается ли в запросе файл
 #         if 'file' not in request.files:
 #             # После перенаправления на страницу загрузки
-#             # покажем сообщение пользователю 
+#             # покажем сообщение пользователю
 #             flash('Не могу прочитать файл')
 #             return redirect(request.url)
 #         file = request.files['file']
@@ -188,8 +192,8 @@ def error502():
 #             filename = secure_filename(file.filename)
 #             # сохраняем файл
 #             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-#             # если все прошло успешно, то перенаправляем  
-#             # на функцию-представление `download_file` 
+#             # если все прошло успешно, то перенаправляем
+#             # на функцию-представление `download_file`
 #             # для скачивания файла
 #             return redirect(url_for('download_file', name=filename))
 #     return '''
