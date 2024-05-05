@@ -1,22 +1,13 @@
-FROM python:3.12-alpine
+FROM python:3.11-alpine
 
-RUN adduser -D bio-quiz
+WORKDIR /web
 
-WORKDIR /home/bio-quiz
+COPY . .
+RUN pip install pipenv
+RUN pipenv install --system --deploy
 
-COPY requirements.txt requirements.txt
-RUN python -m venv venv
-RUN venv/bin/pip install -r requirements.txt
-RUN venv/bin/pip install gunicorn
-
-COPY app app
-COPY bio-quiz.py config.py boot.sh ./
-RUN chmod +x boot.sh
-
-ENV FLASK_APP bio-quiz.py
-
-RUN chown -R bio-quiz:bio-quiz ./
-USER bio-quiz
+# RUN flask db upgrade
+# RUN flask translate compile
 
 EXPOSE 5000
-ENTRYPOINT ["./boot.sh"]
+ENTRYPOINT ["gunicorn", "-b", "0.0.0.0:5000", "--access-logfile", "-", "--error-logfile", "-", "app:app"]
