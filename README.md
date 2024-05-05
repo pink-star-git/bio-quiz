@@ -1,9 +1,26 @@
 # start
 
+## Init
+
 ```bash
-python3 -m venv bio-quiz-venv
-source bio-quiz-venv/bin/activate
-pip install flask flask-WTF WTForms
-export FLASK_APP=bio-quiz.py
-flask run
+pipenv sync
+```
+
+## VSCode
+
+### Debug
+
+* Select env
+* Press F5
+
+## Docker
+
+```bash
+docker compose up -d
+```
+
+## Cli
+
+```bash
+pipenv run python -m app
 ```
